@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slangopedia</title>
+    {% for item in scripts %}
+    {{ item|safe }}
+    {% endfor %}
+    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.7.2.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-3.7.2.min.css">
+</head>
+<body>
+    <nav>
+        <a href="/index">Home</a> |
+        <a href="/linguistics">Linguistics</a> |
+        <a href="/social">Social Dimensions</a> |
+        <a href="/sentimentemotion">Sentiment and Emotion</a> |
+        <a href="/trends">Trends Over Time</a> |
+        <a href="/search">Search</a>
+    </nav>
+
+    <div id="home" style="height: 500px;">
+        <h2>Search Section</h2>
+        Search for any slang word or phase and see its top entries on Urban Dictionary!
+        <br><br>
+        <form action="/search" method="GET">
+            <label>Search:</label>
+            <input type="text" id="search" name="search" value="{{search}}" required>
+            <button type="submit">Go</button>
+        </form>
+        {% if info_bool %}
+        <br>
+        Also check out the visualizations and top ten nearest neighbors based on trained word embeddings below.
+        {% endif %}
+        <br>
+        {% if info_bool %}
+            <br>
+            {% for entry in info['top_5_entries'] %}
+                <table border="1">
+                    <tbody>
+                        <tr>
+                            <td><strong>Slang</strong></td>
+                            <td>{{ search }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Definition</strong></td>
+                            <td>{{ entry['definition'] }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Date</strong></td>
+                            <td>{{ entry['date'][:10] }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Thumbs Up</strong></td>
+                            <td>{{ entry['thumbs_up'] }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Related</strong></td>
+                            <td>{% for r in entry['related'] %}{{ r }}; {% endfor %}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Definition Sentiment</strong></td>
+                            <td>{{ entry['definition_sentiment_label'] }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Definition Emotion</strong></td>
+                            <td>{{ entry['definition_emotion_label'] }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Example</strong></td>
+                            <td>{{ entry['example'] }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Example Sentiment</strong></td>
+                            <td>{{ entry['example_sentiment_label'] }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Example Emotion</strong></td>
+                            <td>{{ entry['example_emotion_label'] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br>
+            </div>
+            {% endfor %}
+            Click here to see all entries on <a href="{{info['url']}}">Urban Dictionary</a>.
+        {% else %}
+            <p>{{info}}</p>
+        {% endif %}
+    </div>
+    <br><br>
+    <div>
+        {% for item in divs %}
+            {{ item|safe }}
+        {% endfor %}
+    </div>
+    <br><br>
+    {% if info_bool %}
+    <div>
+        <table border="1">
+            <tbody>
+                <tr>
+                    <td><strong>Nearest Neighbors</strong></td>
+                </tr>
+                {% for near in nearest %}
+                <tr>
+                    <td>{{ near }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</body>
+</html>
